@@ -21,7 +21,7 @@ class Natsumi(discord.Client):
         plugin.reload()
         watchdog.start(plugin.g.path)
         
-    async def _on_message(self, message: discord.Message) -> None:
+    async def _on_ready(self, message: discord.Message) -> None:
         plugin.reload()
 
     async def _on_message(self, message: discord.Message) -> None:
@@ -41,7 +41,7 @@ class Natsumi(discord.Client):
         if method == 'on_message':
             self._schedule_event(self._on_message, method, *args, **kwargs)
         if method == 'on_ready':
-            self._schedule_event(self._on_message, method, *args, **kwargs)
+            self._schedule_event(self._on_ready, method, *args, **kwargs)
             
         for p in plugin.g.plugins.values():
             try:
