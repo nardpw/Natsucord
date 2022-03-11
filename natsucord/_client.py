@@ -21,8 +21,6 @@ class Natsumi(discord.Client):
         plugin.reload()
         watchdog.start(plugin.g.path)
 
-    async def on_ready(self) -> None:
-
     async def _on_message(self, message: discord.Message) -> None:
         if message.content.startswith(self.prefix):
             command = message.content.split(' ')
