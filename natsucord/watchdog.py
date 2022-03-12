@@ -20,13 +20,13 @@ class WatchDog(PatternMatchingEventHandler):
         self.callback: Callable = callback
 
     def on_moved(self, event: FileSystemEvent):
-        self._run_command(event.src_path)
+        self.callback(event.src_path)
 
     def on_created(self, event: FileSystemEvent):
-        self._run_command(event.src_path)
+        self.callback(event.src_path)
 
     def on_deleted(self, event: FileSystemEvent):
-        self._run_command(event.src_path)
+        self.callback(event.src_path)
 
     def on_modified(self, event: FileModifiedEvent):
         self.callback(event.src_path)
