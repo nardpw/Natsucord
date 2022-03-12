@@ -10,12 +10,6 @@ import discord
 class g:
     data_path = os.path.join(os.getcwd(), '.natsumicord')
 
-
-class TypeCommand(Enum):
-    MESSAGE = 0
-    GUILD_JOIN = 1
-
-
 class TypeCommand(Enum):
     STATIC = 0
     GUILD = 1
