@@ -1,6 +1,6 @@
 import asyncio
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 import discord
 
@@ -10,6 +10,10 @@ from . import watchdog as watchdog
 LOGGER = getLogger(__name__)
 
 
+class g:
+    default_prefix = '!'
+    prefix_map: Dict[int, str] = {}
+
 class Natsumi(discord.Client):
 
     def __init__(self,
@@ -17,15 +21,18 @@ class Natsumi(discord.Client):
                  loop: Optional[asyncio.AbstractEventLoop] = None,
                  **options: Any):
         super().__init__(loop=loop, **options)
-        self.prefix = '!'
         plugin.reload()
         watchdog.start(plugin.g.path)
+        
+    async def _on_ready(self) -> None:
+        plugin.reload()
 
     async def _on_message(self, message: discord.Message) -> None:
-        if message.content.startswith(self.prefix):
+        prefix = g.default_prefix if isinstance(message.channel, discord.DMChannel) else g.prefix_map.get(message.guild.id) or g.default_prefix
+        if message.content.startswith(prefix):
             command = message.content.split(' ')
             args = command[1:]
-            command = command[0][len(self.prefix):]
+            command = command[0][len(prefix):].lower()
             for p in plugin.g.plugins.values():
                 for a in p.aliases:
                     if command == a:
@@ -38,7 +45,7 @@ class Natsumi(discord.Client):
         if method == 'on_message':
             self._schedule_event(self._on_message, method, *args, **kwargs)
         elif method == 'on_ready':
-            plugin.reload()
+            self._schedule_event(self._on_ready, method, *args, **kwargs)
             
         for p in plugin.g.plugins.values():
             try:

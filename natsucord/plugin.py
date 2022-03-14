@@ -28,6 +28,8 @@ def register(name: str, cmd: Command) -> None:
 
 def reload():
     g.plugins.clear()
+    if not os.path.exists(g.path):
+        os.makedirs(g.path)
     for i in Path(g.path).glob("*.py"):
         try:
             spec = importlib.util.spec_from_file_location(i.stem, i)
